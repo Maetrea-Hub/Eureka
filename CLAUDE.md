@@ -187,3 +187,38 @@ Gunakan **Conventional Commits**:
 ## Peringatan Fitur Sensitif
 
 Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirmasi logic sebelum implementasi yang mengubah data finansial** — jangan langsung eksekusi perubahan tanpa verifikasi eksplisit.
+
+---
+
+## Progress Log
+
+### Selesai
+
+| Blok | Deskripsi | Commit |
+|------|-----------|--------|
+| 1 | Inisialisasi monorepo (`frontend/`, `backend/`, `supabase/`) + CLAUDE.md | `3c39ade` |
+| 2 | Migration Supabase: schema auth (ENUM `user_role`, tabel `profiles` + `admin_otp_sessions`, trigger `handle_new_user` SECURITY DEFINER, RLS 5 policy pada `profiles`) | `19faf57` |
+| 2b | Migration tambahan: kolom `otp_attempts` + fungsi atomic `increment_otp_attempts()` | `19faf57` |
+| 3–5 | Backend Express + TypeScript — modul `auth/`: `repository`, `service`, `controller`, middleware `requireAuth` (TOKEN_EXPIRED vs TOKEN_INVALID), `requireRole`, rate limiter dual-layer (IP+email 5×/15min + email-only 10×/15min), enkripsi AES-256-GCM token admin, WhatsApp provider abstraction (Fonnte) | `8267220` |
+| 6 | Frontend scaffold: Vite 8 + React 19 + Tailwind v4 + shadcn/ui (12 komponen), `useAuth` hook, `ProtectedRoute` (role guard + onboarding redirect), router lazy-load, axios interceptor TOKEN_EXPIRED retry | `a1efcc6` |
+| 7 | Frontend auth pages & komponen lengkap: `RegisterForm`, `LoginSiswaForm`, `LoginAdminForm` (2-step InputOTP → `setSession`), `OnboardingForm`, `GoogleOnboardingForm`, `GoogleAuthButton`, `AuthLayout`, `ForgotPassword` (`resetPasswordForEmail`), `ResetPassword` (`PASSWORD_RECOVERY` event), `src/lib/errors.ts` (`extractApiError` + `normalizeWA`) | `bc0133f` |
+
+### Berikutnya
+
+| Blok | Deskripsi |
+|------|-----------|
+| **8** | Dashboard per role: Siswa (jadwal, program aktif, materi terbaru), Tutor (jadwal mengajar, daftar siswa), Admin (ringkasan KPI, aktivitas terkini) |
+| 9 | Modul Pilihan Program (CRUD Admin) |
+| 10 | Manajemen Materi (hierarki Jenjang → Mapel → Topik, 3 tab: Dokumen/Video/Bank Soal) |
+| 11 | Live Kelas (Zoom API, absensi otomatis, rekaman) |
+| 12 | Pembayaran (Midtrans/Xendit webhook, order expiry 48 jam, refund policy) |
+| 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
+| 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
+
+### Catatan Implementasi Penting
+
+- **bcrypt** diganti `bcryptjs` (hindari CVE tar via node-pre-gyp)
+- shadcn di Windows buat folder `@\` literal — fix: `Copy-Item "frontend\@\components\ui\*" "frontend\src\components\ui\" -Force; Remove-Item -Recurse -Force "frontend\@"`
+- MemoryStore rate limiter — upgrade ke RedisStore saat backend di-scale >1 instance
+- Admin 2FA: token Supabase di-encrypt AES-256-GCM di DB, hanya dikembalikan ke client setelah OTP terverifikasi
+- `markOtpSessionUsed()` dipanggil **sebelum** `decryptAES()` untuk mencegah race condition double-submit
