@@ -215,6 +215,14 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
 | 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
 
+### Known Gaps (Proteksi Belum Aktif Penuh)
+
+| Gap | File | Aktif di Blok |
+|-----|------|---------------|
+| `isInUse()` di `backend/src/programs/repository.ts` selalu `return false` — proteksi delete/update kapasitas program belum benar-benar memblokir karena tabel `enrollments` belum ada | `programs/repository.ts:isInUse()` | **Blok 12** |
+
+> Saat Blok 12 (Pembayaran/Enrollments) diimplementasikan: ganti body `isInUse()` dengan query `SELECT 1 FROM enrollments WHERE program_id = $1 AND status = 'active' LIMIT 1`.
+
 ### Catatan Implementasi Penting
 
 - **bcrypt** diganti `bcryptjs` (hindari CVE tar via node-pre-gyp)
