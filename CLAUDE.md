@@ -204,13 +204,13 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | 7 | Frontend auth pages & komponen lengkap: `RegisterForm`, `LoginSiswaForm`, `LoginAdminForm` (2-step InputOTP → `setSession`), `OnboardingForm`, `GoogleOnboardingForm`, `GoogleAuthButton`, `AuthLayout`, `ForgotPassword` (`resetPasswordForEmail`), `ResetPassword` (`PASSWORD_RECOVERY` event), `src/lib/errors.ts` (`extractApiError` + `normalizeWA`) | `bc0133f` |
 | 8 | Dashboard per role: `DashboardLayout` (sidebar + nav + avatar + logout), `StatCard`, `EmptyState` — Siswa (jadwal/program/materi stats), Tutor (siswa/jadwal/materi stats), Admin (4 KPI cards + recent activity grid) | `9308825` |
 | 9 | Modul Pilihan Program CRUD Admin: migration `programs` (ENUM uppercase, CHECK `mata_pelajaran`, RLS 2 policy), backend 4 file (`types/repository/service/controller`), frontend `ProgramTable` + `ProgramFormSheet` + `DeleteDialog` + `MataPelajaranField`, route `/admin/programs` | `96525e2` |
+| 10 | Manajemen Materi: migration `materials` + `questions` (4 ENUM, RLS 6+3 policy), backend 4 file (`types/repository/service/controller`, 10 endpoint), frontend 9 komponen (`MaterialTable`, `MaterialFormSheet`, `MaterialDeleteDialog`, `MaterialStatusBadge`, `BankSoalManager` dengan `useFieldArray` + `discriminatedUnion`, `useMaterials` hook), 3 halaman (Siswa/Tutor/Admin), route `/*/materials` | — |
 
 ### Berikutnya
 
 | Blok | Deskripsi |
 |------|-----------|
-| **10** | Manajemen Materi (hierarki Jenjang → Mapel → Topik, 3 tab: Dokumen/Video/Bank Soal) |
-| 11 | Live Kelas (Zoom API, absensi otomatis, rekaman) |
+| **11** | Live Kelas (Zoom API, absensi otomatis, rekaman) |
 | 12 | Pembayaran (Midtrans/Xendit webhook, order expiry 48 jam, refund policy) |
 | 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
 | 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
@@ -220,8 +220,13 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | Gap | File | Aktif di Blok |
 |-----|------|---------------|
 | `isInUse()` di `backend/src/programs/repository.ts` selalu `return false` — proteksi delete/update kapasitas program belum benar-benar memblokir karena tabel `enrollments` belum ada | `programs/repository.ts:isInUse()` | **Blok 12** |
+| `isAccessed()` di `backend/src/materials/repository.ts` selalu `return false` — proteksi delete materi yang sudah diakses siswa belum aktif karena tabel `material_access` belum ada | `materials/repository.ts:isAccessed()` | **Blok 12** |
+| RLS siswa pada tabel `materials` belum terhubung ke enrollment — siswa bisa baca SEMUA materi `published` tanpa memiliki program terkait | `supabase/migrations/20260630_004_materials.sql` policy `materials_siswa_read_published` | **Blok 12** |
 
-> Saat Blok 12 (Pembayaran/Enrollments) diimplementasikan: ganti body `isInUse()` dengan query `SELECT 1 FROM enrollments WHERE program_id = $1 AND status = 'active' LIMIT 1`.
+> Saat Blok 12 (Pembayaran/Enrollments) diimplementasikan:
+> - Ganti body `isInUse()` dengan query `SELECT 1 FROM enrollments WHERE program_id = $1 AND status = 'active' LIMIT 1`
+> - Ganti body `isAccessed()` dengan query ke tabel `material_access` (count > 0)
+> - Perketat policy `materials_siswa_read_published` dengan filter enrollment (lihat TODO comment di migration 004)
 
 ### Catatan Implementasi Penting
 
