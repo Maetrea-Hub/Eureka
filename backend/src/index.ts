@@ -26,11 +26,13 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // ── Routes ───────────────────────────────────────────────────
-import { authRouter }     from './auth/controller';
-import { programsRouter } from './programs/controller';
+import { authRouter }      from './auth/controller';
+import { programsRouter }  from './programs/controller';
+import { materialsRouter } from './materials/controller';
 
-app.use('/api/auth',     authRouter);
-app.use('/api/programs', programsRouter);
+app.use('/api/auth',      authRouter);
+app.use('/api/programs',  programsRouter);
+app.use('/api/materials', materialsRouter);
 
 // ── Global error handler ──────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
