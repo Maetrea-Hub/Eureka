@@ -14,6 +14,9 @@ const SiswaDashboard    = lazy(() => import('@/pages/siswa/Dashboard'));
 const TutorDashboard    = lazy(() => import('@/pages/tutor/Dashboard'));
 const AdminDashboard    = lazy(() => import('@/pages/admin/Dashboard'));
 const AdminPrograms     = lazy(() => import('@/pages/admin/programs/index'));
+const AdminMaterials    = lazy(() => import('@/pages/admin/materials/index'));
+const TutorMaterials    = lazy(() => import('@/pages/tutor/materials/index'));
+const SiswaMaterials    = lazy(() => import('@/pages/siswa/materials/index'));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center">
@@ -63,6 +66,31 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
         <Suspense fallback={<PageLoader />}><AdminPrograms /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: '/siswa/materials',
+    element: (
+      <ProtectedRoute allowedRoles={['siswa']}>
+        <Suspense fallback={<PageLoader />}><SiswaMaterials /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/tutor/materials',
+    element: (
+      <ProtectedRoute allowedRoles={['tutor']}>
+        <Suspense fallback={<PageLoader />}><TutorMaterials /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/materials',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminMaterials /></Suspense>
       </ProtectedRoute>
     ),
   },
