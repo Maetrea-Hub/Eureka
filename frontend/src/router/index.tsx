@@ -13,6 +13,7 @@ const OnboardingGoogle  = lazy(() => import('@/pages/auth/OnboardingGoogle'));
 const SiswaDashboard    = lazy(() => import('@/pages/siswa/Dashboard'));
 const TutorDashboard    = lazy(() => import('@/pages/tutor/Dashboard'));
 const AdminDashboard    = lazy(() => import('@/pages/admin/Dashboard'));
+const AdminPrograms     = lazy(() => import('@/pages/admin/programs/index'));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center">
@@ -54,6 +55,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
         <Suspense fallback={<PageLoader />}><AdminDashboard /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/programs',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminPrograms /></Suspense>
       </ProtectedRoute>
     ),
   },

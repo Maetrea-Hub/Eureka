@@ -12,7 +12,7 @@ const navItems: NavItem[] = [
   { label: 'Dashboard',         href: '/admin',  icon: LayoutDashboard },
   { label: 'Siswa',                              icon: Users },
   { label: 'Tutor',                              icon: Settings2 },
-  { label: 'Pilihan Program',                    icon: Package },
+  { label: 'Pilihan Program',  href: '/admin/programs', icon: Package },
   { label: 'Materi',                             icon: BookOpen },
   { label: 'Jadwal Kelas',                       icon: Calendar },
   { label: 'Pembayaran',                         icon: CreditCard },
