@@ -202,14 +202,14 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | 3–5 | Backend Express + TypeScript — modul `auth/`: `repository`, `service`, `controller`, middleware `requireAuth` (TOKEN_EXPIRED vs TOKEN_INVALID), `requireRole`, rate limiter dual-layer (IP+email 5×/15min + email-only 10×/15min), enkripsi AES-256-GCM token admin, WhatsApp provider abstraction (Fonnte) | `8267220` |
 | 6 | Frontend scaffold: Vite 8 + React 19 + Tailwind v4 + shadcn/ui (12 komponen), `useAuth` hook, `ProtectedRoute` (role guard + onboarding redirect), router lazy-load, axios interceptor TOKEN_EXPIRED retry | `a1efcc6` |
 | 7 | Frontend auth pages & komponen lengkap: `RegisterForm`, `LoginSiswaForm`, `LoginAdminForm` (2-step InputOTP → `setSession`), `OnboardingForm`, `GoogleOnboardingForm`, `GoogleAuthButton`, `AuthLayout`, `ForgotPassword` (`resetPasswordForEmail`), `ResetPassword` (`PASSWORD_RECOVERY` event), `src/lib/errors.ts` (`extractApiError` + `normalizeWA`) | `bc0133f` |
+| 8 | Dashboard per role: `DashboardLayout` (sidebar + nav + avatar + logout), `StatCard`, `EmptyState` — Siswa (jadwal/program/materi stats), Tutor (siswa/jadwal/materi stats), Admin (4 KPI cards + recent activity grid) | `9308825` |
+| 9 | Modul Pilihan Program CRUD Admin: migration `programs` (ENUM uppercase, CHECK `mata_pelajaran`, RLS 2 policy), backend 4 file (`types/repository/service/controller`), frontend `ProgramTable` + `ProgramFormSheet` + `DeleteDialog` + `MataPelajaranField`, route `/admin/programs` | `96525e2` |
 
 ### Berikutnya
 
 | Blok | Deskripsi |
 |------|-----------|
-| **8** | Dashboard per role: Siswa (jadwal, program aktif, materi terbaru), Tutor (jadwal mengajar, daftar siswa), Admin (ringkasan KPI, aktivitas terkini) |
-| 9 | Modul Pilihan Program (CRUD Admin) |
-| 10 | Manajemen Materi (hierarki Jenjang → Mapel → Topik, 3 tab: Dokumen/Video/Bank Soal) |
+| **10** | Manajemen Materi (hierarki Jenjang → Mapel → Topik, 3 tab: Dokumen/Video/Bank Soal) |
 | 11 | Live Kelas (Zoom API, absensi otomatis, rekaman) |
 | 12 | Pembayaran (Midtrans/Xendit webhook, order expiry 48 jam, refund policy) |
 | 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
