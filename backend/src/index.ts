@@ -26,8 +26,11 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // ── Routes ───────────────────────────────────────────────────
-import { authRouter } from './auth/controller';
-app.use('/api/auth', authRouter);
+import { authRouter }     from './auth/controller';
+import { programsRouter } from './programs/controller';
+
+app.use('/api/auth',     authRouter);
+app.use('/api/programs', programsRouter);
 
 // ── Global error handler ──────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
