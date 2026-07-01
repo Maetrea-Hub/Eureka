@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 const navItems: NavItem[] = [
   { label: 'Dashboard',      href: '/siswa',          icon: LayoutDashboard },
   { label: 'Program Saya',                            icon: Package },
-  { label: 'Jadwal Kelas',                                      icon: Calendar },
+  { label: 'Jadwal Kelas',   href: '/siswa/schedules',           icon: Calendar },
   { label: 'Materi',       href: '/siswa/materials',           icon: BookOpen },
   { label: 'Pembayaran',                              icon: CreditCard },
 ];

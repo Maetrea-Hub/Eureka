@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const navItems: NavItem[] = [
   { label: 'Dashboard',       href: '/tutor',  icon: LayoutDashboard },
-  { label: 'Kelola Jadwal',                    icon: Calendar },
+  { label: 'Kelola Jadwal',  href: '/tutor/schedules', icon: Calendar },
   { label: 'Kelola Materi',  href: '/tutor/materials', icon: BookOpen },
   { label: 'Daftar Siswa',                     icon: Users },
 ];
