@@ -29,10 +29,12 @@ app.get('/health', (_req: Request, res: Response) => {
 import { authRouter }      from './auth/controller';
 import { programsRouter }  from './programs/controller';
 import { materialsRouter } from './materials/controller';
+import { schedulesRouter } from './schedules/controller';
 
 app.use('/api/auth',      authRouter);
 app.use('/api/programs',  programsRouter);
 app.use('/api/materials', materialsRouter);
+app.use('/api/schedules', schedulesRouter);
 
 // ── Global error handler ──────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,8 +43,11 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
+import { startNotificationScheduler } from './lib/scheduler/notification-scheduler';
+
 app.listen(PORT, () => {
   console.log(`[server] Running on http://localhost:${PORT}`);
+  startNotificationScheduler();
 });
 
 export default app;
