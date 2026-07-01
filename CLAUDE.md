@@ -211,8 +211,7 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 
 | Blok | Deskripsi |
 |------|-----------|
-| **12** | Pembayaran (Midtrans/Xendit webhook, order expiry 48 jam, refund policy) |
-| 12 | Pembayaran (Midtrans/Xendit webhook, order expiry 48 jam, refund policy) |
+| **12** | Pembayaran (Midtrans/Xendit webhook, enrollments, order expiry 48 jam, refund policy, wire semua Known Gaps) |
 | 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
 | 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
 
