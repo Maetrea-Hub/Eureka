@@ -19,7 +19,11 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-export function LoginSiswaForm() {
+interface Props {
+  redirectTo?: string;
+}
+
+export function LoginSiswaForm({ redirectTo = '/siswa' }: Props) {
   const navigate = useNavigate();
 
   const form = useForm<FormData>({
@@ -42,7 +46,7 @@ export function LoginSiswaForm() {
       return;
     }
 
-    navigate('/siswa', { replace: true });
+    navigate(redirectTo, { replace: true });
   }
 
   return (

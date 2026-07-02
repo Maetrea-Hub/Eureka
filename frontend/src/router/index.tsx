@@ -5,6 +5,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 // ── Lazy load semua halaman ───────────────────────────────────
 const Register          = lazy(() => import('@/pages/auth/Register'));
 const LoginSiswa        = lazy(() => import('@/pages/auth/LoginSiswa'));
+const LoginTutor        = lazy(() => import('@/pages/auth/LoginTutor'));
 const LoginAdmin        = lazy(() => import('@/pages/auth/LoginAdmin'));
 const ForgotPassword    = lazy(() => import('@/pages/auth/ForgotPassword'));
 const ResetPassword     = lazy(() => import('@/pages/auth/ResetPassword'));
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
   // ── Public routes ─────────────────────────────────────────
   { path: '/register',          element: <Suspense fallback={<PageLoader />}><Register /></Suspense> },
   { path: '/login',             element: <Suspense fallback={<PageLoader />}><LoginSiswa /></Suspense> },
+  { path: '/login/tutor',       element: <Suspense fallback={<PageLoader />}><LoginTutor /></Suspense> },
   { path: '/login/admin',       element: <Suspense fallback={<PageLoader />}><LoginAdmin /></Suspense> },
   { path: '/forgot-password',   element: <Suspense fallback={<PageLoader />}><ForgotPassword /></Suspense> },
   { path: '/reset-password',    element: <Suspense fallback={<PageLoader />}><ResetPassword /></Suspense> },

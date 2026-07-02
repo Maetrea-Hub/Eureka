@@ -16,6 +16,10 @@ export default function LoginSiswa() {
         </Link>
       </p>
       <p className="mt-2 text-center text-xs text-muted-foreground">
+        <Link to="/login/tutor" className="hover:underline">
+          Masuk sebagai Tutor
+        </Link>
+        {' · '}
         <Link to="/login/admin" className="hover:underline">
           Masuk sebagai Admin
         </Link>

@@ -83,24 +83,33 @@ export async function adminLoginStep1(
   // Bersihkan OTP expired di awal setiap percobaan login
   await repo.cleanupExpiredOtpSessions();
 
+  console.log(`[adminLogin:1] attempt email=${payload.email} ip=${clientIp ?? 'unknown'}`);
+
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: payload.email,
     password: payload.password,
   });
 
   if (authError || !authData.session) {
+    console.log(`[adminLogin:1] FAIL signInWithPassword error="${authError?.message ?? 'no session'}" status=${authError?.status}`);
     throw new Error('Email atau password salah');
   }
 
+  console.log(`[adminLogin:1] signInWithPassword OK userId=${authData.user.id}`);
+
   const profile = await repo.findProfileById(authData.user.id);
+
+  console.log(`[adminLogin:1] profile: ${profile ? `role=${profile.role} wa=${profile.nomor_whatsapp ? 'set' : 'null'}` : 'NOT FOUND'}`);
 
   // Samakan pesan error untuk non-admin dan wrong credentials —
   // jangan bocorkan bahwa akun ada tapi bukan admin
   if (!profile || profile.role !== 'admin') {
+    console.log(`[adminLogin:1] FAIL role check profile=${profile ? profile.role : 'null'}`);
     throw new Error('Email atau password salah');
   }
 
   if (!profile.nomor_whatsapp) {
+    console.log(`[adminLogin:1] FAIL nomor_whatsapp not set userId=${authData.user.id}`);
     throw new Error('Nomor WhatsApp Admin belum dikonfigurasi. Hubungi super admin.');
   }
 
@@ -127,9 +136,11 @@ export async function adminLoginStep1(
 
   const waResult = await sendWaWithRetry(profile.nomor_whatsapp, waMessage);
   if (!waResult.success) {
+    console.log(`[adminLogin:1] FAIL WA send error="${waResult.error}"`);
     throw new Error(`Gagal mengirim OTP ke WhatsApp: ${waResult.error}`);
   }
 
+  console.log(`[adminLogin:1] OTP sent OK wa=****${profile.nomor_whatsapp.slice(-4)}`);
   return {
     temp_token,
     wa_preview: profile.nomor_whatsapp.slice(-4),
