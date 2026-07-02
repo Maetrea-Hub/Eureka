@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BookOpen, Calendar, CreditCard, ExternalLink, LayoutDashboard, Package, Video,
+  Bell, BookOpen, Calendar, CreditCard, ExternalLink, LayoutDashboard, Package, Video,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
@@ -19,11 +19,12 @@ import {
 import { extractApiError } from '@/lib/errors';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',    href: '/siswa',              icon: LayoutDashboard },
-  { label: 'Program Saya', href: '/siswa/programs',     icon: Package },
-  { label: 'Jadwal Kelas', href: '/siswa/schedules',    icon: Calendar },
-  { label: 'Materi',       href: '/siswa/materials',    icon: BookOpen },
-  { label: 'Pembayaran',   href: '/siswa/transactions', icon: CreditCard },
+  { label: 'Dashboard',    href: '/siswa',               icon: LayoutDashboard },
+  { label: 'Program Saya', href: '/siswa/programs',      icon: Package },
+  { label: 'Jadwal Kelas', href: '/siswa/schedules',     icon: Calendar },
+  { label: 'Materi',       href: '/siswa/materials',     icon: BookOpen },
+  { label: 'Pembayaran',   href: '/siswa/transactions',  icon: CreditCard },
+  { label: 'Notifikasi',   href: '/siswa/notifications', icon: Bell },
 ];
 
 const STATUS_OPTIONS: Array<{ value: ScheduleStatus | ''; label: string }> = [

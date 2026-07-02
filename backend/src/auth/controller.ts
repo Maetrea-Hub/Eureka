@@ -134,3 +134,23 @@ authRouter.post('/onboarding/google', requireAuth, async (req: Request, res: Res
     res.status(500).json({ error: err instanceof Error ? err.message : 'Onboarding gagal' });
   }
 });
+
+// ── POST /api/auth/change-password ───────────────────────────
+
+const ChangePasswordSchema = z.object({
+  password: z.string().min(8, 'Minimal 8 karakter').max(72),
+});
+
+authRouter.post('/change-password', requireAuth, async (req: Request, res: Response) => {
+  const parsed = ChangePasswordSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    await service.changePassword(req.user!.id, parsed.data.password);
+    res.json({ message: 'Password berhasil diubah' });
+  } catch (err) {
+    res.status(500).json({ error: err instanceof Error ? err.message : 'Gagal mengubah password' });
+  }
+});

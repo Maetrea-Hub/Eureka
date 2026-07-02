@@ -26,24 +26,28 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // ── Routes ───────────────────────────────────────────────────
-import { authRouter }        from './auth/controller';
-import { programsRouter }    from './programs/controller';
-import { materialsRouter }   from './materials/controller';
-import { schedulesRouter }   from './schedules/controller';
-import { ordersRouter }      from './orders/controller';
-import { enrollmentsRouter } from './enrollments/controller';
-import { refundsRouter }     from './refunds/controller';
-import { webhookRouter }     from './payments/webhook';
+import { authRouter }          from './auth/controller';
+import { programsRouter }      from './programs/controller';
+import { materialsRouter }     from './materials/controller';
+import { schedulesRouter }     from './schedules/controller';
+import { ordersRouter }        from './orders/controller';
+import { enrollmentsRouter }   from './enrollments/controller';
+import { refundsRouter }       from './refunds/controller';
+import { webhookRouter }       from './payments/webhook';
+import { notificationsRouter } from './notifications/controller';
+import { zoomWebhookRouter }   from './zoom/webhook';
 
-app.use('/api/auth',        authRouter);
-app.use('/api/programs',    programsRouter);
-app.use('/api/materials',   materialsRouter);
-app.use('/api/schedules',   schedulesRouter);
-app.use('/api/orders',      ordersRouter);
-app.use('/api/enrollments', enrollmentsRouter);
-app.use('/api/refunds',     refundsRouter);
-// Webhook: no global auth middleware — verifikasi dilakukan di dalam handler
-app.use('/api/payments',    webhookRouter);
+app.use('/api/auth',          authRouter);
+app.use('/api/programs',      programsRouter);
+app.use('/api/materials',     materialsRouter);
+app.use('/api/schedules',     schedulesRouter);
+app.use('/api/orders',        ordersRouter);
+app.use('/api/enrollments',   enrollmentsRouter);
+app.use('/api/refunds',       refundsRouter);
+app.use('/api/notifications', notificationsRouter);
+// Webhook tanpa global auth — verifikasi signature dilakukan di dalam handler masing-masing
+app.use('/api/payments',      webhookRouter);
+app.use('/api/zoom',          zoomWebhookRouter);
 
 // ── Global error handler ──────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

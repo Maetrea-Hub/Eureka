@@ -1,4 +1,6 @@
 import * as repo from './repository';
+import * as notifRepo from '../notifications/repository';
+import * as notifService from '../notifications/service';
 import type {
   Material, MaterialInput, MaterialFilters, MaterialStatus,
   Question, QuestionInput,
@@ -61,8 +63,17 @@ export async function updateStatus(
     throw new Error('Anda tidak memiliki akses ke materi ini');
   }
 
-  // Materi yang sudah diakses hanya bisa ke 'nonaktif', tidak bisa dihapus
-  // (isAccessed selalu false sampai Blok 12 — lihat KNOWN GAP di repository.ts)
+  // Notifikasi materi_baru ke siswa yang relevan saat pertama kali dipublish
+  if (status === 'published' && existing.status !== 'published') {
+    void notifRepo.findEnrolledSiswaForMaterial(existing.jenjang, existing.mata_pelajaran)
+      .then((siswa) =>
+        notifService.dispatchToMany(siswa, 'materi_baru', (nama) => ({
+          nama_siswa:  nama,
+          nama_materi: existing.judul,
+        })),
+      );
+  }
+
   return repo.update(id, { status });
 }
 

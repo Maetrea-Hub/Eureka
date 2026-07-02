@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BookOpen, Calendar, CreditCard, LayoutDashboard, Package,
+  Bell, BookOpen, Calendar, CreditCard, LayoutDashboard, Package,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { MaterialStatusBadge } from '@/components/materials/MaterialStatusBadge';
@@ -17,11 +17,12 @@ import {
 } from '@/lib/materials-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',    href: '/siswa',              icon: LayoutDashboard },
-  { label: 'Program Saya', href: '/siswa/programs',     icon: Package },
-  { label: 'Jadwal Kelas', href: '/siswa/schedules',    icon: Calendar },
-  { label: 'Materi',       href: '/siswa/materials',    icon: BookOpen },
-  { label: 'Pembayaran',   href: '/siswa/transactions', icon: CreditCard },
+  { label: 'Dashboard',    href: '/siswa',               icon: LayoutDashboard },
+  { label: 'Program Saya', href: '/siswa/programs',      icon: Package },
+  { label: 'Jadwal Kelas', href: '/siswa/schedules',     icon: Calendar },
+  { label: 'Materi',       href: '/siswa/materials',     icon: BookOpen },
+  { label: 'Pembayaran',   href: '/siswa/transactions',  icon: CreditCard },
+  { label: 'Notifikasi',   href: '/siswa/notifications', icon: Bell },
 ];
 
 function MaterialCard({ material }: { material: Material }) {

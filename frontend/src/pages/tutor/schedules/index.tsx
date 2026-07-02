@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BookOpen, Calendar, LayoutDashboard, Plus, Users,
+  Bell, BookOpen, Calendar, LayoutDashboard, Plus, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { ScheduleTable } from '@/components/schedules/ScheduleTable';
@@ -16,10 +16,11 @@ import { useSchedules } from '@/hooks/useSchedules';
 import { type Schedule, type ScheduleStatus, STATUS_LABEL } from '@/lib/schedules-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',      href: '/tutor',           icon: LayoutDashboard },
-  { label: 'Kelola Jadwal', href: '/tutor/schedules',  icon: Calendar },
-  { label: 'Kelola Materi', href: '/tutor/materials',  icon: BookOpen },
-  { label: 'Daftar Siswa',                             icon: Users },
+  { label: 'Dashboard',  href: '/tutor',               icon: LayoutDashboard },
+  { label: 'Jadwal',     href: '/tutor/schedules',     icon: Calendar },
+  { label: 'Materi',     href: '/tutor/materials',     icon: BookOpen },
+  { label: 'Siswa',                                    icon: Users },
+  { label: 'Notifikasi', href: '/tutor/notifications', icon: Bell },
 ];
 
 const STATUS_OPTIONS: Array<{ value: ScheduleStatus | ''; label: string }> = [

@@ -2,6 +2,8 @@ import { supabase } from '../lib/supabase.js';
 import * as repo from './repository.js';
 import * as orderRepo from '../orders/repository.js';
 import * as enrollmentRepo from '../enrollments/repository.js';
+import * as notifRepo from '../notifications/repository.js';
+import * as notifService from '../notifications/service.js';
 import type { RefundRequest } from './types.js';
 
 // ── Helper ────────────────────────────────────────────────────
@@ -40,7 +42,21 @@ export async function requestRefund(
 
   const tipe = enrollment?.is_first_enrollment ? 'trial_session' : 'standard';
 
-  return repo.create({ order_id: orderId, siswa_id: siswaId, alasan, tipe });
+  const refund = await repo.create({ order_id: orderId, siswa_id: siswaId, alasan, tipe });
+
+  // Notifikasi: refund_masuk ke semua admin
+  const { data: siswaProfile } = await supabase
+    .from('profiles').select('nama_lengkap').eq('id', siswaId).single();
+  const { data: prog } = await supabase
+    .from('programs').select('nama').eq('id', order.program_id).single();
+  const admins = await notifRepo.findAdmins();
+  void notifService.dispatchToMany(admins, 'refund_masuk', () => ({
+    nama_siswa:   siswaProfile?.nama_lengkap ?? 'Siswa',
+    nama_program: (prog as { nama?: string })?.nama ?? 'Program',
+    alasan,
+  }));
+
+  return refund;
 }
 
 // ── Admin: proses refund (approve/reject) ─────────────────────
@@ -61,11 +77,35 @@ export async function processRefund(
     await enrollmentRepo.updateStatusByOrderId(refund.order_id, 'refunded');
   }
 
-  return repo.updateStatus(refundId, {
+  const updated = await repo.updateStatus(refundId, {
     status:       action,
     diproses_oleh: adminId,
     diproses_at:  now,
   });
+
+  // Notifikasi: refund_diproses ke siswa
+  const { data: siswaProfile } = await supabase
+    .from('profiles').select('id, nomor_whatsapp, nama_lengkap').eq('id', refund.siswa_id).single();
+  const { data: order } = await supabase
+    .from('orders').select('program_id').eq('id', refund.order_id).single();
+  const { data: prog } = order
+    ? await supabase.from('programs').select('nama').eq('id', order.program_id).single()
+    : { data: null };
+
+  if (siswaProfile) {
+    void notifService.dispatch(
+      siswaProfile.id,
+      siswaProfile.nomor_whatsapp,
+      'refund_diproses',
+      {
+        nama_siswa:   siswaProfile.nama_lengkap,
+        nama_program: (prog as { nama?: string })?.nama ?? 'Program',
+        status_refund: action,
+      },
+    );
+  }
+
+  return updated;
 }
 
 // ── Admin: force majeure (langsung approved, tanpa window check) ──

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import {
-  BarChart3, BookOpen, Calendar, CreditCard, FileText,
+  BarChart3, Bell, BookOpen, Calendar, CreditCard, FileText,
   LayoutDashboard, MessageSquare, Package, RotateCcw, Settings2, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
@@ -20,10 +20,11 @@ const navItems: NavItem[] = [
   { label: 'Materi',           href: '/admin/materials', icon: BookOpen },
   { label: 'Jadwal Kelas',     href: '/admin/schedules', icon: Calendar },
   { label: 'Pembayaran',                                 icon: CreditCard },
-  { label: 'Refund Requests',  href: '/admin/refunds',   icon: RotateCcw },
-  { label: 'Laporan Keuangan',                           icon: BarChart3 },
-  { label: 'CRM',                                        icon: MessageSquare },
-  { label: 'Audit Log',                                  icon: FileText },
+  { label: 'Refund Requests',  href: '/admin/refunds',        icon: RotateCcw },
+  { label: 'Notifikasi',       href: '/admin/notifications',  icon: Bell },
+  { label: 'Laporan Keuangan',                               icon: BarChart3 },
+  { label: 'CRM',                                            icon: MessageSquare },
+  { label: 'Audit Log',                                      icon: FileText },
 ];
 
 export default function AdminPrograms() {

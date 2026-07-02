@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BookOpen, Calendar, CreditCard, LayoutDashboard, Package, ShoppingCart,
+  Bell, BookOpen, Calendar, CreditCard, LayoutDashboard, Package, ShoppingCart,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { EmptyState } from '@/components/dashboard/EmptyState';
@@ -17,11 +17,12 @@ import {
 import { TIPE_LABEL, MAPEL_LABEL, type Program } from '@/lib/programs-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',    href: '/siswa',             icon: LayoutDashboard },
-  { label: 'Program Saya', href: '/siswa/programs',    icon: Package },
-  { label: 'Jadwal Kelas', href: '/siswa/schedules',   icon: Calendar },
-  { label: 'Materi',       href: '/siswa/materials',   icon: BookOpen },
-  { label: 'Pembayaran',   href: '/siswa/transactions', icon: CreditCard },
+  { label: 'Dashboard',    href: '/siswa',               icon: LayoutDashboard },
+  { label: 'Program Saya', href: '/siswa/programs',      icon: Package },
+  { label: 'Jadwal Kelas', href: '/siswa/schedules',     icon: Calendar },
+  { label: 'Materi',       href: '/siswa/materials',     icon: BookOpen },
+  { label: 'Pembayaran',   href: '/siswa/transactions',  icon: CreditCard },
+  { label: 'Notifikasi',   href: '/siswa/notifications', icon: Bell },
 ];
 
 // ── Enrollment Card ───────────────────────────────────────────

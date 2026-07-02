@@ -21,8 +21,11 @@ const AdminSchedules    = lazy(() => import('@/pages/admin/schedules/index'));
 const TutorSchedules    = lazy(() => import('@/pages/tutor/schedules/index'));
 const SiswaSchedules    = lazy(() => import('@/pages/siswa/schedules/index'));
 const SiswaPrograms     = lazy(() => import('@/pages/siswa/programs/index'));
-const SiswaTransactions = lazy(() => import('@/pages/siswa/transactions/index'));
-const AdminRefunds      = lazy(() => import('@/pages/admin/refunds/index'));
+const SiswaTransactions      = lazy(() => import('@/pages/siswa/transactions/index'));
+const AdminRefunds           = lazy(() => import('@/pages/admin/refunds/index'));
+const SiswaNotifications     = lazy(() => import('@/pages/siswa/notifications/index'));
+const TutorNotifications     = lazy(() => import('@/pages/tutor/notifications/index'));
+const AdminNotifications     = lazy(() => import('@/pages/admin/notifications/index'));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center">
@@ -146,6 +149,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
         <Suspense fallback={<PageLoader />}><AdminRefunds /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/siswa/notifications',
+    element: (
+      <ProtectedRoute allowedRoles={['siswa']}>
+        <Suspense fallback={<PageLoader />}><SiswaNotifications /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/tutor/notifications',
+    element: (
+      <ProtectedRoute allowedRoles={['tutor']}>
+        <Suspense fallback={<PageLoader />}><TutorNotifications /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/notifications',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminNotifications /></Suspense>
       </ProtectedRoute>
     ),
   },

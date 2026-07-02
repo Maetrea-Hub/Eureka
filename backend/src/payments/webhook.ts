@@ -3,6 +3,8 @@ import { supabase } from '../lib/supabase.js';
 import { verifyWebhookSignature } from '../lib/midtrans/midtrans-client.js';
 import * as orderRepo from '../orders/repository.js';
 import * as enrollmentRepo from '../enrollments/repository.js';
+import * as notifRepo from '../notifications/repository.js';
+import * as notifService from '../notifications/service.js';
 import type { MidtransWebhookPayload } from '../lib/midtrans/midtrans-types.js';
 
 export const webhookRouter = Router();
@@ -50,10 +52,10 @@ webhookRouter.post('/webhook', async (req: Request, res: Response) => {
       const prevCount = await enrollmentRepo.countAllBySiswa(order.siswa_id);
       const isFirst   = prevCount === 0;
 
-      // Hitung expires_at dari program.durasi_hari
+      // Hitung expires_at dari program.durasi_hari; ambil nama juga untuk notif
       const { data: program } = await supabase
         .from('programs')
-        .select('durasi_hari')
+        .select('durasi_hari, nama')
         .eq('id', order.program_id)
         .single();
 
@@ -72,6 +74,30 @@ webhookRouter.post('/webhook', async (req: Request, res: Response) => {
       });
 
       console.log(`[Webhook] Paid → order ${order.id}, is_first=${isFirst}, expires=${expiresAt ?? 'never'}`);
+
+      // Notifikasi: pembayaran_berhasil ke siswa
+      const { data: siswaProfile } = await supabase
+        .from('profiles')
+        .select('id, nomor_whatsapp, nama_lengkap')
+        .eq('id', order.siswa_id)
+        .single();
+
+      if (siswaProfile) {
+        const programName = (program as unknown as { nama?: string })?.nama ?? 'Program';
+        void notifService.dispatch(
+          siswaProfile.id,
+          siswaProfile.nomor_whatsapp,
+          'pembayaran_berhasil',
+          { nama_siswa: siswaProfile.nama_lengkap, nama_program: programName },
+        );
+
+        // Notifikasi: siswa_baru_daftar ke semua admin
+        const admins = await notifRepo.findAdmins();
+        void notifService.dispatchToMany(admins, 'siswa_baru_daftar', () => ({
+          nama_siswa:   siswaProfile.nama_lengkap,
+          nama_program: programName,
+        }));
+      }
     }
 
     // ── Expire / Cancel → order kedaluwarsa tanpa dibayar ─────
@@ -79,11 +105,35 @@ webhookRouter.post('/webhook', async (req: Request, res: Response) => {
       if (order.status === 'pending') {
         await orderRepo.updateStatus(order.id, { status: 'expired' });
         console.log(`[Webhook] Expired → order ${order.id}`);
+
+        const { data: siswaProfile } = await supabase
+          .from('profiles').select('id, nomor_whatsapp, nama_lengkap')
+          .eq('id', order.siswa_id).single();
+        const { data: prog } = await supabase
+          .from('programs').select('nama').eq('id', order.program_id).single();
+        if (siswaProfile) {
+          void notifService.dispatch(siswaProfile.id, siswaProfile.nomor_whatsapp,
+            'pembayaran_gagal',
+            { nama_siswa: siswaProfile.nama_lengkap, nama_program: (prog as { nama?: string })?.nama ?? 'Program' },
+          );
+        }
       }
     } else if (transaction_status === 'cancel') {
       if (order.status === 'pending') {
         await orderRepo.updateStatus(order.id, { status: 'cancelled' });
         console.log(`[Webhook] Cancelled → order ${order.id}`);
+
+        const { data: siswaProfile } = await supabase
+          .from('profiles').select('id, nomor_whatsapp, nama_lengkap')
+          .eq('id', order.siswa_id).single();
+        const { data: prog } = await supabase
+          .from('programs').select('nama').eq('id', order.program_id).single();
+        if (siswaProfile) {
+          void notifService.dispatch(siswaProfile.id, siswaProfile.nomor_whatsapp,
+            'pembayaran_gagal',
+            { nama_siswa: siswaProfile.nama_lengkap, nama_program: (prog as { nama?: string })?.nama ?? 'Program' },
+          );
+        }
       }
     }
 

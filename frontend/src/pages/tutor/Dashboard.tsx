@@ -1,5 +1,5 @@
 import {
-  BookOpen, Calendar, LayoutDashboard, Users,
+  Bell, BookOpen, Calendar, LayoutDashboard, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -7,10 +7,11 @@ import { EmptyState } from '@/components/dashboard/EmptyState';
 import { useAuth } from '@/hooks/useAuth';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',       href: '/tutor',  icon: LayoutDashboard },
-  { label: 'Kelola Jadwal',  href: '/tutor/schedules', icon: Calendar },
-  { label: 'Kelola Materi',  href: '/tutor/materials', icon: BookOpen },
-  { label: 'Daftar Siswa',                     icon: Users },
+  { label: 'Dashboard',   href: '/tutor',               icon: LayoutDashboard },
+  { label: 'Jadwal',      href: '/tutor/schedules',     icon: Calendar },
+  { label: 'Materi',      href: '/tutor/materials',     icon: BookOpen },
+  { label: 'Siswa',                                     icon: Users },
+  { label: 'Notifikasi',  href: '/tutor/notifications', icon: Bell },
 ];
 
 export default function TutorDashboard() {

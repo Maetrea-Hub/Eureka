@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BookOpen, Calendar, LayoutDashboard, Plus, Users,
+  Bell, BookOpen, Calendar, LayoutDashboard, Plus, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { MaterialTable } from '@/components/materials/MaterialTable';
@@ -13,10 +13,11 @@ import { useAuth } from '@/hooks/useAuth';
 import type { Material, MaterialTipe } from '@/lib/materials-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',       href: '/tutor',           icon: LayoutDashboard },
-  { label: 'Kelola Jadwal',                             icon: Calendar },
-  { label: 'Kelola Materi',   href: '/tutor/materials', icon: BookOpen },
-  { label: 'Daftar Siswa',                              icon: Users },
+  { label: 'Dashboard',  href: '/tutor',               icon: LayoutDashboard },
+  { label: 'Jadwal',     href: '/tutor/schedules',     icon: Calendar },
+  { label: 'Materi',     href: '/tutor/materials',     icon: BookOpen },
+  { label: 'Siswa',                                    icon: Users },
+  { label: 'Notifikasi', href: '/tutor/notifications', icon: Bell },
 ];
 
 type TipeTab = MaterialTipe;

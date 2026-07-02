@@ -1,13 +1,14 @@
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
-import { Bell, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 export interface NavItem {
   label: string;
@@ -121,14 +122,7 @@ export function DashboardLayout({ children, navItems, pageTitle }: Props) {
         {/* Header */}
         <header className="flex h-16 flex-shrink-0 items-center justify-between border-b bg-card px-6">
           <h1 className="text-lg font-semibold">{pageTitle}</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            title="Notifikasi"
-            onClick={() => toast.info('Notifikasi segera hadir')}
-          >
-            <Bell className="h-5 w-5" />
-          </Button>
+          <NotificationBell />
         </header>
 
         {/* Page content */}

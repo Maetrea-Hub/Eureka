@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  BarChart3, BookOpen, Calendar, CreditCard,
+  BarChart3, Bell, BookOpen, Calendar, CreditCard,
   FileText, LayoutDashboard, MessageSquare,
   Package, Plus, RotateCcw, Settings2, Users,
 } from 'lucide-react';
@@ -21,10 +21,11 @@ const navItems: NavItem[] = [
   { label: 'Materi',           href: '/admin/materials', icon: BookOpen },
   { label: 'Jadwal Kelas',     href: '/admin/schedules', icon: Calendar },
   { label: 'Pembayaran',                                 icon: CreditCard },
-  { label: 'Refund Requests',  href: '/admin/refunds',   icon: RotateCcw },
-  { label: 'Laporan Keuangan',                           icon: BarChart3 },
-  { label: 'CRM',                                        icon: MessageSquare },
-  { label: 'Audit Log',                                  icon: FileText },
+  { label: 'Refund Requests',  href: '/admin/refunds',        icon: RotateCcw },
+  { label: 'Notifikasi',       href: '/admin/notifications',  icon: Bell },
+  { label: 'Laporan Keuangan',                               icon: BarChart3 },
+  { label: 'CRM',                                            icon: MessageSquare },
+  { label: 'Audit Log',                                      icon: FileText },
 ];
 
 type TipeTab = MaterialTipe;

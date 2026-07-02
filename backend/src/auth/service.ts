@@ -3,6 +3,7 @@ import { randomInt } from 'crypto';
 import { supabase } from '../lib/supabase';
 import { decryptAES, encryptAES } from '../lib/crypto';
 import { getWhatsAppProvider } from '../lib/whatsapp';
+import * as notifService from '../notifications/service';
 import type { SendMessageResult } from '../lib/whatsapp/interface';
 import * as repo from './repository';
 import type {
@@ -62,6 +63,14 @@ export async function registerSiswa(payload: RegisterSiswaPayload): Promise<void
     nomor_whatsapp: payload.nomor_whatsapp,
     jenjang_sekolah: payload.jenjang_sekolah,
   });
+
+  // Notifikasi verifikasi_email: WA + in-app (service role bypasses RLS)
+  void notifService.dispatch(
+    data.user.id,
+    payload.nomor_whatsapp,
+    'verifikasi_email',
+    { nama_siswa: payload.nama_lengkap, email: payload.email },
+  );
 }
 
 // ── Admin Login Step 1: verifikasi credentials, kirim OTP WA ─
@@ -189,4 +198,26 @@ export async function completeGoogleOnboarding(
     ...payload,
     onboarding_completed: true,
   });
+}
+
+// ── Ubah Password ─────────────────────────────────────────────
+
+export async function changePassword(
+  userId:      string,
+  newPassword: string,
+): Promise<void> {
+  const { error } = await supabase.auth.admin.updateUserById(userId, {
+    password: newPassword,
+  });
+  if (error) throw new Error(error.message);
+
+  const profile = await repo.findProfileById(userId);
+  if (profile) {
+    void notifService.dispatch(
+      userId,
+      profile.nomor_whatsapp,
+      'password_diubah',
+      { nama_siswa: profile.nama_lengkap },
+    );
+  }
 }

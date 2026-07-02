@@ -1,6 +1,9 @@
 import * as repo from './repository.js';
 import { isEnrolled } from '../enrollments/repository.js';
 import { createZoomMeeting, updateZoomMeeting, deleteZoomMeeting } from '../lib/zoom/zoom-client.js';
+import * as notifService from '../notifications/service.js';
+import type { NotifRecipient } from '../notifications/types.js';
+import { supabase } from '../lib/supabase.js';
 import type { Schedule, Attendance, ScheduleInput, CancelInput, RescheduleInput, ScheduleFilters } from './types.js';
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -121,9 +124,16 @@ export async function cancelSchedule(
     try { await deleteZoomMeeting(existing.zoom_meeting_id); } catch { /* sudah terhapus */ }
   }
 
-  // TODO Blok 12: kirim notif cancel ke semua siswa enrolled
-  // const enrolled = await getEnrolledSiswa(existing.program_id);
-  // await Promise.all(enrolled.map(p => sendWhatsApp(p.phone, cancelTemplate(existing, input.cancel_reason))));
+  // Notifikasi kelas dibatalkan ke semua siswa enrolled
+  void getEnrolledForNotif(existing.program_id).then((siswa) =>
+    notifService.dispatchToMany(siswa, 'kelas_dibatalkan', (nama) => ({
+      nama_siswa:    nama,
+      judul_kelas:   existing.judul_kelas,
+      tanggal:       existing.tanggal,
+      jam_mulai:     existing.jam_mulai,
+      cancel_reason: input.cancel_reason ?? undefined,
+    })),
+  );
   console.log(`[Cancel] Schedule ${id} — alasan: ${input.cancel_reason ?? '—'}`);
 
   return repo.update(id, { status: 'dibatalkan', cancel_reason: input.cancel_reason ?? null });
@@ -165,7 +175,16 @@ export async function rescheduleSchedule(
   const newSchedule = await repo.create(newInput, existing.tutor_id, zoomData);
   await repo.update(newSchedule.id, { reschedule_from: id });
 
-  // TODO Blok 12: kirim notif reschedule ke semua siswa enrolled
+  // Notifikasi kelas dijadwalkan ulang ke semua siswa enrolled
+  void getEnrolledForNotif(existing.program_id).then((siswa) =>
+    notifService.dispatchToMany(siswa, 'kelas_dijadwalkan_ulang', (nama) => ({
+      nama_siswa:  nama,
+      judul_kelas: existing.judul_kelas,
+      tanggal:     input.tanggal,
+      jam_mulai:   input.jam_mulai,
+      link_zoom:   newSchedule.zoom_join_url ?? undefined,
+    })),
+  );
   console.log(`[Reschedule] Schedule ${id} → baru ${newSchedule.id}`);
 
   return newSchedule;
@@ -229,4 +248,18 @@ export async function getAttendances(
     throw new Error('tidak berhak melihat absensi jadwal ini');
   }
   return repo.findAttendancesBySchedule(scheduleId);
+}
+
+// ── Internal helper ───────────────────────────────────────────
+
+async function getEnrolledForNotif(programId: string): Promise<NotifRecipient[]> {
+  const { data, error } = await supabase
+    .from('enrollments')
+    .select('siswa_id, profiles!siswa_id(id, nomor_whatsapp, nama_lengkap)')
+    .eq('program_id', programId)
+    .eq('status', 'active');
+
+  if (error || !data?.length) return [];
+  return (data as unknown as Array<{ siswa_id: string; profiles: NotifRecipient }>)
+    .map((r) => r.profiles);
 }

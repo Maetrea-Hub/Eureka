@@ -206,13 +206,13 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | 9 | Modul Pilihan Program CRUD Admin: migration `programs` (ENUM uppercase, CHECK `mata_pelajaran`, RLS 2 policy), backend 4 file (`types/repository/service/controller`), frontend `ProgramTable` + `ProgramFormSheet` + `DeleteDialog` + `MataPelajaranField`, route `/admin/programs` | `96525e2` |
 | 10 | Manajemen Materi: migration `materials` + `questions` (4 ENUM, RLS 6+3 policy), backend 4 file (`types/repository/service/controller`, 10 endpoint), frontend 9 komponen (`MaterialTable`, `MaterialFormSheet`, `MaterialDeleteDialog`, `MaterialStatusBadge`, `BankSoalManager` dengan `useFieldArray` + `discriminatedUnion`, `useMaterials` hook), 3 halaman (Siswa/Tutor/Admin), route `/*/materials` | `ace9afb` |
 | 11 | Live Kelas: migration `schedules`+`schedule_host_urls`+`attendances`+`settings` (2 ENUM, 14 RLS policy, `zoom_start_url` diproteksi di tabel terpisah), Zoom OAuth S2S token cache, `ZoomClient` (create/update/delete), node-cron scheduler (H-1/H-0/15min polling), backend modul schedules 4 file (8 endpoint), frontend 6 komponen + 3 halaman (Tutor/Admin/Siswa) + `ScheduleFormSheet`/`CancelDialog`/`RescheduleDialog`/`AttendanceTable` | `448bbab` |
-| 12 | Pembayaran + Enrollments: migration `20260701_006_payments.sql` (4 ENUM, 4 tabel baru, ALTER programs+durasi_hari, 15 RLS policy, DROP+RECREATE 2 policy existing), Midtrans Snap native fetch, backend `orders/`+`enrollments/`+`refunds/`+`payments/webhook` (15 file), frontend `payments-api`+2 hooks+2 komponen+3 halaman (`siswa/programs`, `siswa/transactions`, `admin/refunds`), wire semua 6 Known Gaps | — |
+| 12 | Pembayaran + Enrollments: migration `20260701_006_payments.sql` (4 ENUM, 4 tabel baru, ALTER programs+durasi_hari, 15 RLS policy, DROP+RECREATE 2 policy existing), Midtrans Snap native fetch, backend `orders/`+`enrollments/`+`refunds/`+`payments/webhook` (15 file), frontend `payments-api`+2 hooks+2 komponen+3 halaman (`siswa/programs`, `siswa/transactions`, `admin/refunds`), wire semua 6 Known Gaps | `20aace7` |
+| 13 | Notifikasi: migration `20260702_007_notifications.sql` (ENUM 16 nilai, tabel `notifications`, RLS 2 policy, ALTER `schedules` + `recording_url`, Supabase Realtime), backend `notifications/` 4 file + `zoom/webhook.ts` (Zoom recording.completed), rewrite `notification-scheduler.ts` (cron perpanjangan H-7/H-3), integrasi dispatch ke `payments/webhook`, `refunds/service`, `schedules/service`, `materials/service`, `auth/service` + `changePassword`, frontend `notifications-api` + `useNotifications` (Realtime subscribe) + `NotificationBell` + `NotificationsList` + 3 halaman notif (siswa/tutor/admin) + router 3 route baru, nav Bell di semua halaman | — |
 
 ### Berikutnya
 
 | Blok | Deskripsi |
 |------|-----------|
-| 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
 | 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
 
 ### Catatan Implementasi Penting
@@ -227,3 +227,9 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 - `is_first_enrollment` dicek dengan `countAllBySiswa()` (semua status) **SEBELUM** insert enrollment baru
 - `enrollments` menggunakan partial unique index (`WHERE status = 'active'`) — bukan UNIQUE constraint biasa — untuk memungkinkan re-enroll setelah expired/refunded
 - `programs.durasi_hari` (INTEGER nullable): untuk kalkulasi `expires_at` enrollment; `durasi` (TEXT) tetap untuk display ke user
+- `rekaman_tersedia` menggunakan Zoom webhook `recording.completed` (bukan polling `jam_selesai`) — recording processing time tidak deterministik
+- Zoom webhook signature: `v0=HMAC-SHA256("v0:{timestamp}:{JSON.stringify(body)}", SECRET_TOKEN)` dibanding header `x-zm-signature`; URL validation challenge: `{ plainToken, encryptedToken: HMAC-SHA256(plainToken, SECRET_TOKEN) }`
+- `dispatch()` memanggil `void sendWaWithRetry()` (fire-and-forget) — WA retry 1× setelah 5 menit dalam lambda async terpisah per user (tidak blokir `Promise.allSettled`)
+- `PATCH /api/notifications/read-all` harus didaftarkan **sebelum** `PATCH /api/notifications/:id/read` — Express routing ambiguity
+- Backend pakai `SUPABASE_SERVICE_ROLE_KEY` untuk insert ke `notifications` (bypass RLS) karena beberapa dispatch terjadi tanpa user session (e.g. `verifikasi_email` saat registrasi)
+- Frontend Realtime: `supabase.channel().on('postgres_changes', {event:'INSERT', filter:'user_id=eq.{id}'})` — prepend ke state, increment unread badge
