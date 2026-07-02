@@ -66,6 +66,7 @@ import { startNotificationScheduler } from './lib/scheduler/notification-schedul
 
 app.listen(PORT, () => {
   console.log(`[server] Running on http://localhost:${PORT}`);
+  console.log(`[server] CORS origin: ${process.env.FRONTEND_URL ?? 'http://localhost:5173 (fallback)'}`);
   startNotificationScheduler();
 });
 
