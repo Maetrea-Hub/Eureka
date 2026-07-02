@@ -33,9 +33,9 @@ const navItems: NavItem[] = [
   { label: 'Pembayaran',                                 icon: CreditCard },
   { label: 'Refund Requests',  href: '/admin/refunds',        icon: RotateCcw },
   { label: 'Notifikasi',       href: '/admin/notifications',  icon: Bell },
-  { label: 'Laporan Keuangan',                               icon: BarChart3 },
-  { label: 'CRM',                                            icon: MessageSquare },
-  { label: 'Audit Log',                                      icon: FileText },
+  { label: 'Laporan Keuangan', href: '/admin/finance', icon: BarChart3 },
+  { label: 'CRM',              href: '/admin/crm',     icon: MessageSquare },
+  { label: 'Audit Log',        href: '/admin/audit',   icon: FileText },
 ];
 
 const STATUS_COLOR: Record<RefundStatus, string> = {

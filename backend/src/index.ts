@@ -36,6 +36,9 @@ import { refundsRouter }       from './refunds/controller';
 import { webhookRouter }       from './payments/webhook';
 import { notificationsRouter } from './notifications/controller';
 import { zoomWebhookRouter }   from './zoom/webhook';
+import { financeRouter }       from './finance/controller';
+import { auditRouter }         from './audit/controller';
+import { crmRouter }           from './crm/controller';
 
 app.use('/api/auth',          authRouter);
 app.use('/api/programs',      programsRouter);
@@ -45,6 +48,9 @@ app.use('/api/orders',        ordersRouter);
 app.use('/api/enrollments',   enrollmentsRouter);
 app.use('/api/refunds',       refundsRouter);
 app.use('/api/notifications', notificationsRouter);
+app.use('/api/finance',       financeRouter);
+app.use('/api/audit',         auditRouter);
+app.use('/api/crm',           crmRouter);
 // Webhook tanpa global auth — verifikasi signature dilakukan di dalam handler masing-masing
 app.use('/api/payments',      webhookRouter);
 app.use('/api/zoom',          zoomWebhookRouter);

@@ -4,6 +4,7 @@ import * as orderRepo from '../orders/repository.js';
 import * as enrollmentRepo from '../enrollments/repository.js';
 import * as notifRepo from '../notifications/repository.js';
 import * as notifService from '../notifications/service.js';
+import { logAudit } from '../audit/service.js';
 import type { RefundRequest } from './types.js';
 
 // ── Helper ────────────────────────────────────────────────────
@@ -44,6 +45,8 @@ export async function requestRefund(
 
   const refund = await repo.create({ order_id: orderId, siswa_id: siswaId, alasan, tipe });
 
+  logAudit(siswaId, 'siswa', 'request_refund', 'orders', orderId, { alasan });
+
   // Notifikasi: refund_masuk ke semua admin
   const { data: siswaProfile } = await supabase
     .from('profiles').select('nama_lengkap').eq('id', siswaId).single();
@@ -78,10 +81,12 @@ export async function processRefund(
   }
 
   const updated = await repo.updateStatus(refundId, {
-    status:       action,
+    status:        action,
     diproses_oleh: adminId,
-    diproses_at:  now,
+    diproses_at:   now,
   });
+
+  logAudit(adminId, 'admin', 'process_refund', 'refund_requests', refundId, { action });
 
   // Notifikasi: refund_diproses ke siswa
   const { data: siswaProfile } = await supabase
@@ -127,7 +132,7 @@ export async function forceRefund(
   await orderRepo.updateStatus(orderId, { status: 'refunded' });
   await enrollmentRepo.updateStatusByOrderId(orderId, 'refunded');
 
-  return repo.create({
+  const refund = await repo.create({
     order_id:      orderId,
     siswa_id:      order.siswa_id,
     alasan,
@@ -136,6 +141,10 @@ export async function forceRefund(
     diproses_oleh: adminId,
     diproses_at:   now,
   });
+
+  logAudit(adminId, 'admin', 'force_majeure_refund', 'orders', orderId, { alasan });
+
+  return refund;
 }
 
 // ── List ──────────────────────────────────────────────────────

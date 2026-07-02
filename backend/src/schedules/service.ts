@@ -2,6 +2,7 @@ import * as repo from './repository.js';
 import { isEnrolled } from '../enrollments/repository.js';
 import { createZoomMeeting, updateZoomMeeting, deleteZoomMeeting } from '../lib/zoom/zoom-client.js';
 import * as notifService from '../notifications/service.js';
+import { logAudit } from '../audit/service.js';
 import type { NotifRecipient } from '../notifications/types.js';
 import { supabase } from '../lib/supabase.js';
 import type { Schedule, Attendance, ScheduleInput, CancelInput, RescheduleInput, ScheduleFilters } from './types.js';
@@ -134,7 +135,10 @@ export async function cancelSchedule(
       cancel_reason: input.cancel_reason ?? undefined,
     })),
   );
-  console.log(`[Cancel] Schedule ${id} — alasan: ${input.cancel_reason ?? '—'}`);
+  logAudit(requesterId, requesterRole, 'cancel_schedule', 'schedules', id, {
+    judul_kelas: existing.judul_kelas,
+    cancel_reason: input.cancel_reason ?? null,
+  });
 
   return repo.update(id, { status: 'dibatalkan', cancel_reason: input.cancel_reason ?? null });
 }
@@ -185,7 +189,11 @@ export async function rescheduleSchedule(
       link_zoom:   newSchedule.zoom_join_url ?? undefined,
     })),
   );
-  console.log(`[Reschedule] Schedule ${id} → baru ${newSchedule.id}`);
+  logAudit(requesterId, requesterRole, 'reschedule_schedule', 'schedules', id, {
+    judul_kelas: existing.judul_kelas,
+    new_schedule_id: newSchedule.id,
+    tanggal: input.tanggal,
+  });
 
   return newSchedule;
 }

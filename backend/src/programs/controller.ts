@@ -72,10 +72,10 @@ programsRouter.post(
       return;
     }
     try {
-      const program = await service.createProgram({
-        ...parsed.data,
-        status: parsed.data.status ?? true,
-      });
+      const program = await service.createProgram(
+        { ...parsed.data, status: parsed.data.status ?? true },
+        req.user!.id,
+      );
       res.status(201).json(program);
     } catch (err) {
       res.status(400).json({ error: err instanceof Error ? err.message : 'Gagal membuat program' });
@@ -96,7 +96,7 @@ programsRouter.put(
       return;
     }
     try {
-      const program = await service.updateProgram(req.params['id'] as string, parsed.data);
+      const program = await service.updateProgram(req.params['id'] as string, parsed.data, req.user!.id);
       res.json(program);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Gagal update program';
@@ -135,7 +135,7 @@ programsRouter.delete(
   requireRole('admin'),
   async (req: Request, res: Response) => {
     try {
-      await service.deleteProgram(req.params['id'] as string);
+      await service.deleteProgram(req.params['id'] as string, req.user!.id);
       res.status(204).send();
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Gagal hapus program';

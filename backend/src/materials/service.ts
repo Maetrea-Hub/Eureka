@@ -1,6 +1,7 @@
 import * as repo from './repository';
 import * as notifRepo from '../notifications/repository';
 import * as notifService from '../notifications/service';
+import { logAudit } from '../audit/service';
 import type {
   Material, MaterialInput, MaterialFilters, MaterialStatus,
   Question, QuestionInput,
@@ -72,6 +73,7 @@ export async function updateStatus(
           nama_materi: existing.judul,
         })),
       );
+    logAudit(requesterId, requesterRole, 'publish_material', 'materials', id, { judul: existing.judul });
   }
 
   return repo.update(id, { status });

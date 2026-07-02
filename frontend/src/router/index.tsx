@@ -26,6 +26,9 @@ const AdminRefunds           = lazy(() => import('@/pages/admin/refunds/index'))
 const SiswaNotifications     = lazy(() => import('@/pages/siswa/notifications/index'));
 const TutorNotifications     = lazy(() => import('@/pages/tutor/notifications/index'));
 const AdminNotifications     = lazy(() => import('@/pages/admin/notifications/index'));
+const AdminFinance           = lazy(() => import('@/pages/admin/finance/index'));
+const AdminAudit             = lazy(() => import('@/pages/admin/audit/index'));
+const AdminCrm               = lazy(() => import('@/pages/admin/crm/index'));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center">
@@ -173,6 +176,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
         <Suspense fallback={<PageLoader />}><AdminNotifications /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/finance',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminFinance /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/audit',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminAudit /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/crm',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminCrm /></Suspense>
       </ProtectedRoute>
     ),
   },

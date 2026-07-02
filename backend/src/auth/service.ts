@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { decryptAES, encryptAES } from '../lib/crypto';
 import { getWhatsAppProvider } from '../lib/whatsapp';
 import * as notifService from '../notifications/service';
+import { logAudit } from '../audit/service';
 import type { SendMessageResult } from '../lib/whatsapp/interface';
 import * as repo from './repository';
 import type {
@@ -167,6 +168,8 @@ export async function adminLoginStep2(
   const profile = await repo.findProfileById(session.admin_id);
   if (!profile) throw new Error('Profil Admin tidak ditemukan');
 
+  logAudit(profile.id, 'admin', 'admin_login', 'profiles', profile.id);
+
   return {
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -220,4 +223,6 @@ export async function changePassword(
       { nama_siswa: profile.nama_lengkap },
     );
   }
+
+  logAudit(userId, null, 'change_password', 'profiles', userId);
 }
