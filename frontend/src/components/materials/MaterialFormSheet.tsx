@@ -60,7 +60,7 @@ export function MaterialFormSheet({ open, onClose, onSaved, tipe, material }: Pr
   const [activeTab, setActiveTab] = useState<'info' | 'konten'>('info');
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       judul: '', jenjang: 'SMP', mata_pelajaran: 'matematika', topik: '',
       file_url: null, file_type: null, bisa_download: false,
@@ -215,8 +215,8 @@ export function MaterialFormSheet({ open, onClose, onSaved, tipe, material }: Pr
                 )} />
 
                 {/* Type-specific fields */}
-                {tipe === 'dokumen' && <DokumenFields control={form.control} />}
-                {tipe === 'video'   && <VideoFields   control={form.control} />}
+                {tipe === 'dokumen' && <DokumenFields control={form.control as any} />}
+                {tipe === 'video'   && <VideoFields   control={form.control as any} />}
 
                 <div className="flex gap-2 pt-2">
                   <Button type="button" variant="outline" className="flex-1" onClick={onClose}>

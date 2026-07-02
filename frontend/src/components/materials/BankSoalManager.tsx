@@ -29,7 +29,7 @@ const QuestionFormSchema = z.discriminatedUnion('tipe_soal', [
     tipe_soal:          z.literal('pilihan_ganda'),
     pertanyaan:         z.string().min(1, 'Pertanyaan wajib diisi'),
     opsi_jawaban:       z.array(OpsiSchema).min(2, 'Minimal 2 opsi'),
-    jawaban_benar_idx:  z.number({ required_error: 'Pilih 1 jawaban benar' }),
+    jawaban_benar_idx:  z.number({ message: 'Pilih 1 jawaban benar' }),
     pembahasan:         z.string().nullable().optional(),
     ada_timer:          z.boolean(),
     durasi_timer_detik: z.coerce.number().int().positive().nullable().optional(),
@@ -68,7 +68,7 @@ function QuestionForm({ materialId, question, nextUrutan, onSaved, onCancel }: Q
   const defaultBenarIdx = defaultOpsi.findIndex((o) => o.is_correct);
 
   const form = useForm<QuestionFormData>({
-    resolver: zodResolver(QuestionFormSchema),
+    resolver: zodResolver(QuestionFormSchema) as any,
     defaultValues: {
       tipe_soal:          question?.tipe_soal ?? 'pilihan_ganda',
       pertanyaan:         question?.pertanyaan ?? '',

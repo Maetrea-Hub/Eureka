@@ -35,7 +35,7 @@ export function OnboardingForm() {
   const { profile, isLoading } = useAuth();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       nomor_whatsapp:  '',
       jenjang_sekolah: 'SMP',

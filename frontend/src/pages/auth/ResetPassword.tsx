@@ -28,7 +28,7 @@ function ResetPasswordForm() {
   const [invalid, setInvalid] = useState(false);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { password: '', confirm_password: '' },
   });
 

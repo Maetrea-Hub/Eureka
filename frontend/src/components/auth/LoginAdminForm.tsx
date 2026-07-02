@@ -57,7 +57,7 @@ export function LoginAdminForm() {
   // ── Step 1 form ────────────────────────────────────────────
 
   const step1 = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(step1Schema) as any,
     defaultValues: { email: '', password: '' },
   });
 
@@ -75,7 +75,7 @@ export function LoginAdminForm() {
   // ── Step 2 form ────────────────────────────────────────────
 
   const step2 = useForm<Step2Data>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(step2Schema) as any,
     defaultValues: { otp: '' },
   });
 

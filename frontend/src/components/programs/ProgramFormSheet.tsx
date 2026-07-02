@@ -54,7 +54,7 @@ export function ProgramFormSheet({ open, onClose, onSaved, program }: Props) {
   const isEdit = !!program;
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: {
       nama:           '',
       tipe_layanan:   'regular_class',

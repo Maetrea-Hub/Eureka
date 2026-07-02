@@ -39,7 +39,7 @@ export function RescheduleDialog({ schedule, onClose, onDone }: Props) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(Schema),
+    resolver: zodResolver(Schema) as any,
     defaultValues: { tanggal: '', jam_mulai: '', jam_selesai: '' },
   });
 

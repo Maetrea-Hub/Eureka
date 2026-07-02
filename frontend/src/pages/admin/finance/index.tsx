@@ -87,12 +87,12 @@ export default function AdminFinance() {
           ))
         ) : summary ? (
           <>
-            <StatCard label="Total Masuk" value={formatRupiah(summary.total_masuk)}
-              sublabel={`${summary.count_paid} transaksi`} icon={BarChart3} />
-            <StatCard label="Pending" value={formatRupiah(summary.total_pending)}
-              sublabel={`${summary.count_pending} menunggu`} icon={CreditCard} />
-            <StatCard label="Total Refund" value={formatRupiah(summary.total_refunded)}
-              sublabel="" icon={RotateCcw} />
+            <StatCard title="Total Masuk" value={formatRupiah(summary.total_masuk)}
+              subtitle={`${summary.count_paid} transaksi`} icon={BarChart3} />
+            <StatCard title="Pending" value={formatRupiah(summary.total_pending)}
+              subtitle={`${summary.count_pending} menunggu`} icon={CreditCard} />
+            <StatCard title="Total Refund" value={formatRupiah(summary.total_refunded)}
+              icon={RotateCcw} />
           </>
         ) : (
           <p className="col-span-3 text-sm text-muted-foreground">Gagal memuat summary</p>

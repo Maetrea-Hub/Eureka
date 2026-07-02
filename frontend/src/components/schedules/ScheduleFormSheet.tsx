@@ -53,7 +53,7 @@ export function ScheduleFormSheet({ open, onClose, onSaved, schedule }: Props) {
   const [zoomNote,  setZoomNote]  = useState<string | null>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(Schema),
+    resolver: zodResolver(Schema) as any,
     defaultValues: {
       program_id:  schedule?.program_id  ?? '',
       judul_kelas: schedule?.judul_kelas ?? '',

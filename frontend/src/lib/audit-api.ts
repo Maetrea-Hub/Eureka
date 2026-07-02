@@ -1,4 +1,4 @@
-import api from './axios';
+import { api } from './api';
 
 export interface AuditLog {
   id:          string;

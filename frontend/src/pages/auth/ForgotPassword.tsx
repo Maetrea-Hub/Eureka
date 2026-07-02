@@ -21,7 +21,7 @@ function ForgotPasswordForm() {
   const [sent, setSent] = useState(false);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { email: '' },
   });
 
