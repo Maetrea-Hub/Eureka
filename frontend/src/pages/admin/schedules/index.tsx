@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   BarChart3, BookOpen, Calendar, CreditCard,
   FileText, LayoutDashboard, MessageSquare,
-  Package, Plus, Settings2, Users,
+  Package, Plus, RotateCcw, Settings2, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { ScheduleTable } from '@/components/schedules/ScheduleTable';
@@ -18,16 +18,17 @@ import { useSchedules } from '@/hooks/useSchedules';
 import { type Schedule, type ScheduleStatus, STATUS_LABEL } from '@/lib/schedules-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',       href: '/admin',           icon: LayoutDashboard },
-  { label: 'Siswa',                                     icon: Users },
-  { label: 'Tutor',                                     icon: Settings2 },
-  { label: 'Pilihan Program', href: '/admin/programs',  icon: Package },
-  { label: 'Materi',          href: '/admin/materials', icon: BookOpen },
-  { label: 'Jadwal Kelas',    href: '/admin/schedules', icon: Calendar },
-  { label: 'Pembayaran',                                icon: CreditCard },
-  { label: 'Laporan Keuangan',                          icon: BarChart3 },
-  { label: 'CRM',                                       icon: MessageSquare },
-  { label: 'Audit Log',                                 icon: FileText },
+  { label: 'Dashboard',        href: '/admin',           icon: LayoutDashboard },
+  { label: 'Siswa',                                      icon: Users },
+  { label: 'Tutor',                                      icon: Settings2 },
+  { label: 'Pilihan Program',  href: '/admin/programs',  icon: Package },
+  { label: 'Materi',           href: '/admin/materials', icon: BookOpen },
+  { label: 'Jadwal Kelas',     href: '/admin/schedules', icon: Calendar },
+  { label: 'Pembayaran',                                 icon: CreditCard },
+  { label: 'Refund Requests',  href: '/admin/refunds',   icon: RotateCcw },
+  { label: 'Laporan Keuangan',                           icon: BarChart3 },
+  { label: 'CRM',                                        icon: MessageSquare },
+  { label: 'Audit Log',                                  icon: FileText },
 ];
 
 const STATUS_OPTIONS: Array<{ value: ScheduleStatus | ''; label: string }> = [

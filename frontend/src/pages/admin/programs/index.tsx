@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import {
-  BookOpen, Calendar, CreditCard, FileText,
-  LayoutDashboard, MessageSquare, Package, BarChart3, Settings2, Users,
+  BarChart3, BookOpen, Calendar, CreditCard, FileText,
+  LayoutDashboard, MessageSquare, Package, RotateCcw, Settings2, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { ProgramTable } from '@/components/programs/ProgramTable';
@@ -13,16 +13,17 @@ import { usePrograms } from '@/hooks/usePrograms';
 import type { Program } from '@/lib/programs-api';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',        href: '/admin',          icon: LayoutDashboard },
-  { label: 'Siswa',                                     icon: Users },
-  { label: 'Tutor',                                     icon: Settings2 },
-  { label: 'Pilihan Program',  href: '/admin/programs', icon: Package },
-  { label: 'Materi',                                    icon: BookOpen },
-  { label: 'Jadwal Kelas',                              icon: Calendar },
-  { label: 'Pembayaran',                                icon: CreditCard },
-  { label: 'Laporan Keuangan',                          icon: BarChart3 },
-  { label: 'CRM',                                       icon: MessageSquare },
-  { label: 'Audit Log',                                 icon: FileText },
+  { label: 'Dashboard',        href: '/admin',           icon: LayoutDashboard },
+  { label: 'Siswa',                                      icon: Users },
+  { label: 'Tutor',                                      icon: Settings2 },
+  { label: 'Pilihan Program',  href: '/admin/programs',  icon: Package },
+  { label: 'Materi',           href: '/admin/materials', icon: BookOpen },
+  { label: 'Jadwal Kelas',     href: '/admin/schedules', icon: Calendar },
+  { label: 'Pembayaran',                                 icon: CreditCard },
+  { label: 'Refund Requests',  href: '/admin/refunds',   icon: RotateCcw },
+  { label: 'Laporan Keuangan',                           icon: BarChart3 },
+  { label: 'CRM',                                        icon: MessageSquare },
+  { label: 'Audit Log',                                  icon: FileText },
 ];
 
 export default function AdminPrograms() {

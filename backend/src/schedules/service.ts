@@ -1,4 +1,5 @@
 import * as repo from './repository.js';
+import { isEnrolled } from '../enrollments/repository.js';
 import { createZoomMeeting, updateZoomMeeting, deleteZoomMeeting } from '../lib/zoom/zoom-client.js';
 import type { Schedule, Attendance, ScheduleInput, CancelInput, RescheduleInput, ScheduleFilters } from './types.js';
 
@@ -198,9 +199,8 @@ export async function joinClass(
   }
   if (!schedule.zoom_join_url) throw new Error('link zoom belum tersedia');
 
-  // TODO Blok 12: cek enrollment siswa di program ini
-  // const enrolled = await checkEnrollment(siswaId, schedule.program_id);
-  // if (!enrolled) throw new Error('tidak terdaftar di program ini');
+  const enrolled = await isEnrolled(siswaId, schedule.program_id);
+  if (!enrolled) throw new Error('tidak terdaftar di program ini');
 
   const toleranceStr = await repo.getSetting('late_tolerance_minutes');
   const tolerance    = parseInt(toleranceStr ?? '15', 10);

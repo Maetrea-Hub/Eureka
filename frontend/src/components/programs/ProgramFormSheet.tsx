@@ -35,6 +35,7 @@ const schema = z.object({
     ...('ipa_terpadu' | 'matematika' | 'b_inggris' | 'biologi' | 'fisika' | 'kimia')[],
   ])).min(1, 'Pilih minimal 1 mata pelajaran'),
   durasi:         z.string().min(1, 'Durasi wajib diisi'),
+  durasi_hari:    z.coerce.number().int('Harus bilangan bulat').min(1).nullish(),
   kapasitas:      z.coerce.number().int('Harus bilangan bulat').min(1, 'Minimal 1'),
   tarif:          z.coerce.number().min(0, 'Tarif tidak boleh negatif'),
   status:         z.boolean(),
@@ -60,6 +61,7 @@ export function ProgramFormSheet({ open, onClose, onSaved, program }: Props) {
       jenjang:        'SMP',
       mata_pelajaran: [],
       durasi:         '',
+      durasi_hari:    null,
       kapasitas:      1,
       tarif:          0,
       status:         true,
@@ -75,6 +77,7 @@ export function ProgramFormSheet({ open, onClose, onSaved, program }: Props) {
         jenjang:        program.jenjang,
         mata_pelajaran: program.mata_pelajaran,
         durasi:         program.durasi,
+        durasi_hari:    program.durasi_hari ?? null,
         kapasitas:      program.kapasitas,
         tarif:          program.tarif,
         status:         program.status,
@@ -82,7 +85,7 @@ export function ProgramFormSheet({ open, onClose, onSaved, program }: Props) {
     } else {
       form.reset({
         nama: '', tipe_layanan: 'regular_class', jenjang: 'SMP',
-        mata_pelajaran: [], durasi: '', kapasitas: 1, tarif: 0, status: true,
+        mata_pelajaran: [], durasi: '', durasi_hari: null, kapasitas: 1, tarif: 0, status: true,
       });
     }
   }, [program, form, open]);
@@ -163,13 +166,32 @@ export function ProgramFormSheet({ open, onClose, onSaved, program }: Props) {
               <MataPelajaranField field={field} />
             )} />
 
-            <FormField control={form.control} name="durasi" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Durasi</FormLabel>
-                <FormControl><Input placeholder="Contoh: 1 Bulan, 3 Bulan" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField control={form.control} name="durasi" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Durasi (tampilan)</FormLabel>
+                  <FormControl><Input placeholder="Contoh: 1 Bulan" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="durasi_hari" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Durasi (hari)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      placeholder="Contoh: 30"
+                      {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">Opsional — untuk menghitung expiry enrollment</p>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <FormField control={form.control} name="kapasitas" render={({ field }) => (

@@ -72,18 +72,22 @@ export async function remove(id: string): Promise<void> {
 // ─────────────────────────────────────────────────────────────
 // KNOWN GAP — Blok 12 (material_access tracking)
 //
-// Saat ini selalu return false karena belum ada tabel tracking
-// akses materi oleh siswa.
-//
-// UPDATE DI BLOK 12: ganti body dengan —
-//   const { count } = await supabase
-//     .from('material_access')
-//     .select('id', { count: 'exact', head: true })
-//     .eq('material_id', id);
-//   return (count ?? 0) > 0;
-// ─────────────────────────────────────────────────────────────
-export async function isAccessed(_id: string): Promise<boolean> {
-  return false;
+export async function isAccessed(id: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('material_access')
+    .select('id', { count: 'exact', head: true })
+    .eq('material_id', id);
+  if (error) throw new Error(error.message);
+  return (count ?? 0) > 0;
+}
+
+export async function upsertAccess(siswaId: string, materialId: string): Promise<void> {
+  const now = new Date().toISOString();
+  const { error } = await supabase.from('material_access').upsert(
+    { siswa_id: siswaId, material_id: materialId, last_accessed_at: now },
+    { onConflict: 'siswa_id,material_id', ignoreDuplicates: false },
+  );
+  if (error) throw new Error(error.message);
 }
 
 // ── Questions ─────────────────────────────────────────────────

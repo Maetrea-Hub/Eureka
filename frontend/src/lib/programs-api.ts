@@ -32,6 +32,7 @@ export interface Program {
   jenjang:        JenjangLevel;
   mata_pelajaran: MataPelajaran[];
   durasi:         string;
+  durasi_hari:    number | null;
   kapasitas:      number;
   tarif:          number;
   status:         boolean;

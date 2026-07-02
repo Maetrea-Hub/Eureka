@@ -71,20 +71,12 @@ export async function remove(id: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-// ─────────────────────────────────────────────────────────────
-// KNOWN GAP — Blok 12 (Enrollments)
-//
-// Fungsi ini saat ini selalu return false karena tabel
-// `enrollments` belum diimplementasikan.
-//
-// UPDATE DI BLOK 12: ganti body dengan —
-//   const { count } = await supabase
-//     .from('enrollments')
-//     .select('id', { count: 'exact', head: true })
-//     .eq('program_id', id)
-//     .eq('status', 'active');
-//   return (count ?? 0) > 0;
-// ─────────────────────────────────────────────────────────────
-export async function isInUse(_id: string): Promise<boolean> {
-  return false;
+export async function isInUse(id: string): Promise<boolean> {
+  const { count, error } = await supabase
+    .from('enrollments')
+    .select('id', { count: 'exact', head: true })
+    .eq('program_id', id)
+    .eq('status', 'active');
+  if (error) throw new Error(error.message);
+  return (count ?? 0) > 0;
 }

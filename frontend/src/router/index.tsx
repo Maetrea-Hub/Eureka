@@ -20,6 +20,9 @@ const SiswaMaterials    = lazy(() => import('@/pages/siswa/materials/index'));
 const AdminSchedules    = lazy(() => import('@/pages/admin/schedules/index'));
 const TutorSchedules    = lazy(() => import('@/pages/tutor/schedules/index'));
 const SiswaSchedules    = lazy(() => import('@/pages/siswa/schedules/index'));
+const SiswaPrograms     = lazy(() => import('@/pages/siswa/programs/index'));
+const SiswaTransactions = lazy(() => import('@/pages/siswa/transactions/index'));
+const AdminRefunds      = lazy(() => import('@/pages/admin/refunds/index'));
 
 const PageLoader = () => (
   <div className="flex h-screen items-center justify-center">
@@ -118,6 +121,31 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['admin']}>
         <Suspense fallback={<PageLoader />}><AdminSchedules /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: '/siswa/programs',
+    element: (
+      <ProtectedRoute allowedRoles={['siswa']}>
+        <Suspense fallback={<PageLoader />}><SiswaPrograms /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/siswa/transactions',
+    element: (
+      <ProtectedRoute allowedRoles={['siswa']}>
+        <Suspense fallback={<PageLoader />}><SiswaTransactions /></Suspense>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/refunds',
+    element: (
+      <ProtectedRoute allowedRoles={['admin']}>
+        <Suspense fallback={<PageLoader />}><AdminRefunds /></Suspense>
       </ProtectedRoute>
     ),
   },

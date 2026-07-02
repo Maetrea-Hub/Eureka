@@ -19,11 +19,11 @@ import {
 import { extractApiError } from '@/lib/errors';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',    href: '/siswa',           icon: LayoutDashboard },
-  { label: 'Program Saya',                           icon: Package },
-  { label: 'Jadwal Kelas', href: '/siswa/schedules', icon: Calendar },
-  { label: 'Materi',       href: '/siswa/materials', icon: BookOpen },
-  { label: 'Pembayaran',                             icon: CreditCard },
+  { label: 'Dashboard',    href: '/siswa',              icon: LayoutDashboard },
+  { label: 'Program Saya', href: '/siswa/programs',     icon: Package },
+  { label: 'Jadwal Kelas', href: '/siswa/schedules',    icon: Calendar },
+  { label: 'Materi',       href: '/siswa/materials',    icon: BookOpen },
+  { label: 'Pembayaran',   href: '/siswa/transactions', icon: CreditCard },
 ];
 
 const STATUS_OPTIONS: Array<{ value: ScheduleStatus | ''; label: string }> = [

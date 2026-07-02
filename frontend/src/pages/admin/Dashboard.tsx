@@ -1,7 +1,7 @@
 import {
   BarChart3, BookOpen, Calendar, CreditCard,
   FileText, LayoutDashboard, MessageSquare,
-  Package, Settings2, Users,
+  Package, RotateCcw, Settings2, Users,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import { StatCard } from '@/components/dashboard/StatCard';
@@ -9,16 +9,17 @@ import { EmptyState } from '@/components/dashboard/EmptyState';
 import { useAuth } from '@/hooks/useAuth';
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',         href: '/admin',  icon: LayoutDashboard },
-  { label: 'Siswa',                              icon: Users },
-  { label: 'Tutor',                              icon: Settings2 },
-  { label: 'Pilihan Program',  href: '/admin/programs', icon: Package },
-  { label: 'Materi',                             icon: BookOpen },
-  { label: 'Jadwal Kelas',                       icon: Calendar },
-  { label: 'Pembayaran',                         icon: CreditCard },
-  { label: 'Laporan Keuangan',                   icon: BarChart3 },
-  { label: 'CRM',                                icon: MessageSquare },
-  { label: 'Audit Log',                          icon: FileText },
+  { label: 'Dashboard',        href: '/admin',           icon: LayoutDashboard },
+  { label: 'Siswa',                                      icon: Users },
+  { label: 'Tutor',                                      icon: Settings2 },
+  { label: 'Pilihan Program',  href: '/admin/programs',  icon: Package },
+  { label: 'Materi',           href: '/admin/materials', icon: BookOpen },
+  { label: 'Jadwal Kelas',     href: '/admin/schedules', icon: Calendar },
+  { label: 'Pembayaran',                                 icon: CreditCard },
+  { label: 'Refund Requests',  href: '/admin/refunds',   icon: RotateCcw },
+  { label: 'Laporan Keuangan',                           icon: BarChart3 },
+  { label: 'CRM',                                        icon: MessageSquare },
+  { label: 'Audit Log',                                  icon: FileText },
 ];
 
 export default function AdminDashboard() {

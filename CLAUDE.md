@@ -206,33 +206,14 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 | 9 | Modul Pilihan Program CRUD Admin: migration `programs` (ENUM uppercase, CHECK `mata_pelajaran`, RLS 2 policy), backend 4 file (`types/repository/service/controller`), frontend `ProgramTable` + `ProgramFormSheet` + `DeleteDialog` + `MataPelajaranField`, route `/admin/programs` | `96525e2` |
 | 10 | Manajemen Materi: migration `materials` + `questions` (4 ENUM, RLS 6+3 policy), backend 4 file (`types/repository/service/controller`, 10 endpoint), frontend 9 komponen (`MaterialTable`, `MaterialFormSheet`, `MaterialDeleteDialog`, `MaterialStatusBadge`, `BankSoalManager` dengan `useFieldArray` + `discriminatedUnion`, `useMaterials` hook), 3 halaman (Siswa/Tutor/Admin), route `/*/materials` | `ace9afb` |
 | 11 | Live Kelas: migration `schedules`+`schedule_host_urls`+`attendances`+`settings` (2 ENUM, 14 RLS policy, `zoom_start_url` diproteksi di tabel terpisah), Zoom OAuth S2S token cache, `ZoomClient` (create/update/delete), node-cron scheduler (H-1/H-0/15min polling), backend modul schedules 4 file (8 endpoint), frontend 6 komponen + 3 halaman (Tutor/Admin/Siswa) + `ScheduleFormSheet`/`CancelDialog`/`RescheduleDialog`/`AttendanceTable` | `448bbab` |
+| 12 | Pembayaran + Enrollments: migration `20260701_006_payments.sql` (4 ENUM, 4 tabel baru, ALTER programs+durasi_hari, 15 RLS policy, DROP+RECREATE 2 policy existing), Midtrans Snap native fetch, backend `orders/`+`enrollments/`+`refunds/`+`payments/webhook` (15 file), frontend `payments-api`+2 hooks+2 komponen+3 halaman (`siswa/programs`, `siswa/transactions`, `admin/refunds`), wire semua 6 Known Gaps | — |
 
 ### Berikutnya
 
 | Blok | Deskripsi |
 |------|-----------|
-| **12** | Pembayaran (Midtrans/Xendit webhook, enrollments, order expiry 48 jam, refund policy, wire semua Known Gaps) |
 | 13 | Notifikasi (14 kategori, WhatsApp Fonnte + Supabase Realtime) |
 | 14 | CRM + Laporan Keuangan + Audit Log (Admin) |
-
-### Known Gaps (Proteksi Belum Aktif Penuh)
-
-| Gap | File | Aktif di Blok |
-|-----|------|---------------|
-| `isInUse()` di `backend/src/programs/repository.ts` selalu `return false` — proteksi delete/update kapasitas program belum benar-benar memblokir karena tabel `enrollments` belum ada | `programs/repository.ts:isInUse()` | **Blok 12** |
-| `isAccessed()` di `backend/src/materials/repository.ts` selalu `return false` — proteksi delete materi yang sudah diakses siswa belum aktif karena tabel `material_access` belum ada | `materials/repository.ts:isAccessed()` | **Blok 12** |
-| RLS siswa pada tabel `materials` belum terhubung ke enrollment — siswa bisa baca SEMUA materi `published` tanpa memiliki program terkait | `supabase/migrations/20260630_004_materials.sql` policy `materials_siswa_read_published` | **Blok 12** |
-| RLS siswa pada tabel `schedules` belum terhubung ke enrollment — siswa bisa lihat SEMUA jadwal aktif tanpa memiliki program terkait | `supabase/migrations/20260701_005_schedules.sql` policy `schedules_siswa_read` | **Blok 12** |
-| Notifikasi H-1/H-0/15min scheduler hanya log — belum ada target siswa karena `enrollments` belum ada | `backend/src/lib/scheduler/notification-scheduler.ts` | **Blok 12** |
-| `joinClass()` tidak cek enrollment siswa di program — siswa bisa join semua jadwal aktif | `backend/src/schedules/service.ts:joinClass()` | **Blok 12** |
-
-> Saat Blok 12 (Pembayaran/Enrollments) diimplementasikan:
-> - Ganti body `isInUse()` dengan query `SELECT 1 FROM enrollments WHERE program_id = $1 AND status = 'active' LIMIT 1`
-> - Ganti body `isAccessed()` dengan query ke tabel `material_access` (count > 0)
-> - Perketat policy `materials_siswa_read_published` dengan filter enrollment (lihat TODO comment di migration 004)
-> - Perketat policy `schedules_siswa_read` dengan filter enrollment
-> - Isi body notif scheduler dengan fetch `enrollments` → kirim WhatsApp
-> - Isi `joinClass()` dengan cek `enrollments` sebelum return join URL
 
 ### Catatan Implementasi Penting
 
@@ -241,3 +222,8 @@ Refund, pembayaran, dan akses materi menyentuh data finansial. **Selalu konfirma
 - MemoryStore rate limiter — upgrade ke RedisStore saat backend di-scale >1 instance
 - Admin 2FA: token Supabase di-encrypt AES-256-GCM di DB, hanya dikembalikan ke client setelah OTP terverifikasi
 - `markOtpSessionUsed()` dipanggil **sebelum** `decryptAES()` untuk mencegah race condition double-submit
+- Midtrans Snap.js dimuat dinamis di `CheckoutDialog.tsx` menggunakan `VITE_MIDTRANS_CLIENT_KEY` + `VITE_MIDTRANS_IS_PRODUCTION`
+- Webhook `/api/payments/webhook` sengaja **tidak** dibungkus `requireAuth` — Midtrans memanggil dari server mereka; autentikasi via SHA512 signature verification
+- `is_first_enrollment` dicek dengan `countAllBySiswa()` (semua status) **SEBELUM** insert enrollment baru
+- `enrollments` menggunakan partial unique index (`WHERE status = 'active'`) — bukan UNIQUE constraint biasa — untuk memungkinkan re-enroll setelah expired/refunded
+- `programs.durasi_hari` (INTEGER nullable): untuk kalkulasi `expires_at` enrollment; `durasi` (TEXT) tetap untuk display ke user
